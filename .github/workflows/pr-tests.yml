@@ -1,0 +1,34 @@
+name: PR Unit Tests
+
+on:
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          dir
+          export PYTHONPATH=$(pwd)
+
+      - name: Run unit tests only
+        run: |
+          python -m pytest tests/test_analyzer.py --junitxml=unit-test-results.xml
+
+      - name: Upload unit test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-unit-tests
+          path: unit-test-results.xml

@@ -1,0 +1,32 @@
+name: Master Unit + Integration Tests
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  full-test-suite:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run full test suite (unit + integration)
+        run: |
+          python -m pytest --junitxml=full-test-results.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: master-full-tests
+          path: full-test-results.xml
